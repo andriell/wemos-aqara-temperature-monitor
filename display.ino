@@ -66,26 +66,22 @@ void displayLoop() {
   display.drawString(0, 44, weatherHumidity());
   display.drawString(0, 54, weatherPressure());
 
-
-  spinner++;
   switch (spinner) {
     case 0:
-      display.drawString(123, 0, String("\\"));
+      display.drawXbm(120, 0, 6, 6, planer_0_bits);
       break;
     case 1:
-      display.drawString(123, 0, String("|"));
+      display.drawXbm(120, 0, 6, 6, planer_1_bits);
       break;
     case 2:
-      display.drawString(123, 0, String("/"));
-      break;
-    case 3:
-      display.drawString(123, 0, String("Y"));
+      display.drawXbm(120, 0, 6, 6, planer_2_bits);
       break;
     default:
-      display.drawString(123, 0, String("X"));
+      display.drawXbm(120, 0, 6, 6, planer_3_bits);
       spinner = 0;
       break;
   }
+  spinner++;
 
   display.display();
 }
