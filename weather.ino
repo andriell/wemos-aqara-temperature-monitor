@@ -26,9 +26,9 @@ void weatherSetup()
 void weatherLoop()
 {
   updateWeather(&weather1);
-  printWeather(&weather1, 1);
+  printWeather(&weather1);
   updateWeather(&weather2);
-  printWeather(&weather2, 2);
+  printWeather(&weather2);
 }
 
 void updateWeather(struct StructWeather* weather) {
@@ -79,7 +79,7 @@ void updateWeather(struct StructWeather* weather) {
   return;
 }
 
-void printWeather(struct StructWeather* weather, int i) {
+void printWeather(struct StructWeather* weather) {
   Serial.print("Weather: ");
   Serial.print(weather->cardinalDirection);
   Serial.print("; Sid: ");
@@ -109,4 +109,8 @@ String weatherTemperature() {
 
 String weatherHumidity() {
   return String(round(float((weather1.humidity + weather2.humidity) / 2) / 10.0) / 10.0, 1) + String(" %");
+}
+
+String weatherPressure() {
+  return String(round(float((weather1.pressure + weather2.pressure) / 2) / 100.0) / 10.0, 1) + String(" kPa");
 }
