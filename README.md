@@ -1,1 +1,1 @@
-# wemos-aqara-temperature-monitor
+# temperature display for aqara sensor
