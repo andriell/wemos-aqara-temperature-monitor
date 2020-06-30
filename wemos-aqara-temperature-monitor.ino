@@ -1,6 +1,10 @@
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
+// ArduinoJson
 #include <ArduinoJson.h>
+#include <Wire.h>  
+// ESP8266 and ESP32 OLED driver for SSD1306 displays
+#include<SH1106.h>
 
 #define WEMOS_D0     16
 #define WEMOS_D1     5
@@ -23,10 +27,12 @@ void setup() {
   ledSetup();
   wifiSetup();
   weatherSetup();
+  displaySetup();
 }
 
 void loop()
 {
   weatherLoop();
+  displayLoop();
   delay(10000);
 }

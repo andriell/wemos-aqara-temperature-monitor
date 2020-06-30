@@ -4,6 +4,7 @@ WiFiUDP Udp;
 
 struct StructWeather {
   String sid;
+  String cardinalDirection;
   long voltage;
   long temperature;
   long humidity;
@@ -17,9 +18,10 @@ void weatherSetup()
 {
   Udp.begin(9898);
   weather1.sid = weatherSid1;
+  weather1.cardinalDirection = cardinalDirection1;
   weather2.sid = weatherSid2;
+  weather2.cardinalDirection = cardinalDirection2;
 }
-
 
 void weatherLoop()
 {
@@ -79,7 +81,7 @@ void updateWeather(struct StructWeather* weather) {
 
 void printWeather(struct StructWeather* weather, int i) {
   Serial.print("Weather: ");
-  Serial.print(i);
+  Serial.print(weather->cardinalDirection);
   Serial.print("; Sid: ");
   Serial.print(weather->sid);
   Serial.print("; Voltage: ");
@@ -91,4 +93,20 @@ void printWeather(struct StructWeather* weather, int i) {
   Serial.print("; Pressure: ");
   Serial.print(weather->pressure);
   Serial.println();
+}
+
+String weatherTemperature1() {
+  return String(round(float(weather1.temperature) / 10.0) / 10.0, 1) + String(" °C");
+}
+
+String weatherTemperature2() {
+  return String(round(float(weather2.temperature) / 10.0) / 10.0, 1) + String(" °C");
+}
+
+String weatherTemperature() {
+  return String(round(float((weather1.temperature + weather2.temperature) / 2) / 10.0) / 10.0, 1) + String(" °C");
+}
+
+String weatherHumidity() {
+  return String(round(float((weather1.humidity + weather2.humidity) / 2) / 10.0) / 10.0, 1) + String(" %");
 }
