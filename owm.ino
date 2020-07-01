@@ -7,9 +7,9 @@
 struct StructOwm {
   int id = 800;
   const char* main = "Clear";
-  const char* description = "clear sky";
+  const char* description = "SCATTERED CLOUDS";
   int icon = 1;
-  const char* city = "";
+  const char* city = "MY CITY";
 };
 
 

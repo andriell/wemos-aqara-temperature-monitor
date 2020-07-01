@@ -5,13 +5,13 @@ void ledSetup() {
 
 void ledBlink(int n, unsigned long d) {
   for (int i = 0; i <= n; i++) {
-    digitalWrite(WEMOS_D4_LED, HIGH);  // turn on LED with voltage HIGH
-    delay(d);                       // wait
-    digitalWrite(WEMOS_D4_LED, LOW);   // turn off LED with voltage LOW
-    delay(d);                       // wait
+    digitalWrite(WEMOS_D4_LED, LOW);
+    delay(d);
+    digitalWrite(WEMOS_D4_LED, HIGH);
+    delay(d);
   }
 }
 
 void ledOff() {
-  digitalWrite(WEMOS_D4_LED, LOW);
+  digitalWrite(WEMOS_D4_LED, HIGH);
 }

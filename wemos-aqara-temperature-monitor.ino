@@ -40,5 +40,6 @@ void loop()
   weatherLoop();
   owmLoop();
   displayLoop();
+  ledOff();
   delay(30 * 60 * 1000);
 }

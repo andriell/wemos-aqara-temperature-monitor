@@ -1,7 +1,7 @@
 #include "images.h"
 
 #define img_x 72
-#define img_y 12
+#define img_y 9
 
 SH1106 display(0x3C, WEMOS_D2, WEMOS_D1);
 
