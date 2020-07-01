@@ -7,9 +7,9 @@
 struct StructOwm {
   int id = 800;
   const char* main = "Clear";
-  const char* description = "SCATTERED CLOUDS";
+  const char* description = "clear sky";
   int icon = 1;
-  const char* city = "MY CITY";
+  const char* city = "City";
 };
 
 
@@ -20,6 +20,12 @@ void owmSetup() {
 }
 
 void owmLoop() {
+  owm.id = 0;
+  owm.main = "";
+  owm.description = "";
+  owm.icon = 0;
+  owm.city = "";
+  
   if ((WiFi.status() != WL_CONNECTED)) {
     return;
   }
