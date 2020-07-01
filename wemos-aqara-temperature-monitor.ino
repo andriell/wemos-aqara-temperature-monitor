@@ -28,16 +28,17 @@
 void setup() {
   wemosSetup();
   ledSetup();
+  displaySetup();
   wifiSetup();
   weatherSetup();
-  displaySetup();
   owmSetup();
 }
 
 void loop()
 {
+  ledOff();
   weatherLoop();
   owmLoop();
   displayLoop();
-  delay(10000);
+  delay(30 * 60 * 1000);
 }

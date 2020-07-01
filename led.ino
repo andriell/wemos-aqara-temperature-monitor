@@ -11,3 +11,7 @@ void ledBlink(int n, unsigned long d) {
     delay(d);                       // wait
   }
 }
+
+void ledOff() {
+  digitalWrite(WEMOS_D4_LED, LOW);
+}
