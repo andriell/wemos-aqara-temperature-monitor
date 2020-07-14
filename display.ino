@@ -8,6 +8,7 @@ SH1106 display(0x3C, WEMOS_D1, WEMOS_D2);
 void displaySetup()   {
   display.init();
   display.flipScreenVertically();
+  displayLog(String("Loading..."));
 }
 
 int icon = 1;
@@ -131,4 +132,20 @@ void displayVoltage(long v, int y) {
     display.setPixel(voltage, y);
     //display.drawHorizontalLine(0, y, voltage);
   }
+}
+
+int displayLogPosition = 0;
+
+// Вывод строчки лога на экран
+void displayLog(String s) {
+  Serial.println(s);
+  if (displayLogPosition > 5) {
+    displayLogPosition = 0;
+    display.clear();
+  }
+  display.setFont(ArialMT_Plain_10);
+  display.drawString(0, displayLogPosition * 10, s);
+  displayLogPosition++;
+  
+  display.display();
 }
