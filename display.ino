@@ -3,7 +3,7 @@
 #define img_x 72
 #define img_y 9
 
-SH1106 display(0x3C, WEMOS_D2, WEMOS_D1);
+SH1106 display(0x3C, WEMOS_D1, WEMOS_D2);
 
 void displaySetup()   {
   display.init();

@@ -1,11 +1,10 @@
-# Temperature display for aqara sensor
-
+# Temperature display for aqara sensor with xiaomi gateway v2
 This is a program for Wemos D1 mini to display information from 
-two temperature and humidity sensors Xiaomi Aqara. Like this:
+two temperature and humidity sensors Aqara. Like this:
 
 ![sensor.png](images/sensor.png)
 
-This program works with Xiaomi Aqara Gateway Hub V2 in developer mode. 
+This program works with Xiaomi Gateway V2 in developer mode. 
 This program can connect to the hub through a TCP port using WI-FI. 
 Then the hub can be connected to the sensor using the ZigBee protocol, 
 and you can see the information from the sensor.
