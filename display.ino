@@ -149,3 +149,8 @@ void displayLog(String s) {
   
   display.display();
 }
+
+void displayClear() {
+  displayLogPosition = 0;
+  display.clear();
+}

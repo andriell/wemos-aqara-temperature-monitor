@@ -37,6 +37,7 @@ void setup() {
 void loop()
 {
   ledOff();
+  wifiLoop();
   weatherLoop();
   owmLoop();
   displayLoop();

@@ -1,30 +1,33 @@
 // Network SSID
 
-void wifiSetup() {
-  Serial.println();
-  Serial.println();
 
+// Дожидается подключения к wi-fi
+// Выводит лог на экран
+void wifiConnection()
+{
   displayLog(String("Connecting to "));
   displayLog(String(wifiSsid));
 
+  while (WiFi.status() != WL_CONNECTED) {
+    ledBlink(1, 250);
+    displayLog(String("Connecting to Wi-Fi"));
+  }
 
+  displayLog(String("Wi-Fi connected"));
+  displayLog(String("IP address: "));
+
+  displayLog(wifiGetIpString());
+  ledBlink(3, 500);
+}
+
+void wifiSetup() {
   WiFi.hostname("Temperature monitor");
   WiFi.mode(WIFI_STA);
   WiFi.begin(wifiSsid, wifiPassword);
 
-  int i = 0;
-  while (WiFi.status() != WL_CONNECTED) {
-    ledBlink(1, 250);
-    displayLog(String("Connecting ") + String(++i));
-  }
+  wifiConnection();
 
-
-  displayLog(String("WiFi connected"));
-  displayLog(String("IP address: "));
-
-
-  displayLog(wifiGetIpString());
-  ledBlink(3, 500);
+  WiFi.setAutoReconnect(true);
 }
 
 String wifiGetIpString()
@@ -34,4 +37,14 @@ String wifiGetIpString()
          String(ipAddress[1]) + String(".") + \
          String(ipAddress[2]) + String(".") + \
          String(ipAddress[3]);
+}
+
+
+void wifiLoop()
+{
+  if (WiFi.status() != WL_CONNECTED) {
+    displayClear();
+    WiFi.reconnect();
+    wifiConnection();
+  }
 }
