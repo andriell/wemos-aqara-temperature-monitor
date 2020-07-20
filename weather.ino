@@ -16,8 +16,8 @@ struct StructWeather weather2;
 void weatherSetup()
 {
   Udp.begin(9898);
-  weather1.sid = weatherSid1;
-  weather2.sid = weatherSid2;
+  weather1.sid = configWeatherSid1;
+  weather2.sid = configWeatherSid2;
 }
 
 void weatherLoop()
@@ -34,7 +34,7 @@ void updateWeather(struct StructWeather* weather) {
   Serial.print("Send ");
   Serial.println(request);
 
-  Udp.beginPacket(hubIp, 9898);
+  Udp.beginPacket(configWeatherHubIp, 9898);
   Udp.write((char*) request.c_str());
   int isEnd = Udp.endPacket();
 

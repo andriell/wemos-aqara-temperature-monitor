@@ -32,7 +32,7 @@ void owmLoop() {
   HTTPClient http;
 
   Serial.println("[HTTP] begin...");
-  if (!http.begin(client, String("http://api.openweathermap.org/data/2.5/weather?id=472045&units=metric&lang=en&appid=") + openWeatherMapKey)) {  // HTTP
+  if (!http.begin(client, configOwmUrl)) {  // HTTP
     Serial.println("[HTTP} Unable to connect");
     return;
   }

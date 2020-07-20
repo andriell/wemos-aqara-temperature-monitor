@@ -1,12 +1,9 @@
-// Network SSID
-
-
 // Дожидается подключения к wi-fi
 // Выводит лог на экран
 void wifiConnection()
 {
   displayLog(String("Connecting to "));
-  displayLog(String(wifiSsid));
+  displayLog(String(configWifiSsid));
 
   while (WiFi.status() != WL_CONNECTED) {
     ledBlink(1, 250);
@@ -23,7 +20,7 @@ void wifiConnection()
 void wifiSetup() {
   WiFi.hostname("Temperature monitor");
   WiFi.mode(WIFI_STA);
-  WiFi.begin(wifiSsid, wifiPassword);
+  WiFi.begin(configWifiSsid, configWifiPassword);
 
   wifiConnection();
 

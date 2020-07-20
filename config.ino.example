@@ -1,10 +1,10 @@
-const char* wifiSsid = "***";
-const char* wifiPassword = "***";
+const char* configWifiSsid = "***";
+const char* configWifiPassword = "***";
 
-const char* weatherSid1 = "12345678901234";
-const char* weatherSid2 = "12345678901234";
+const String configWeatherSid1 = "***";
+const String configWeatherSid2 = "***";
 
-const IPAddress hubIp(192, 168, 1, 1);
+const IPAddress configWeatherHubIp(192, 168, 1, *);
 
 // https://openweathermap.org/
-const String openWeatherMapKey = "***";
+const String configOwmUrl = "http://api.openweathermap.org/data/2.5/weather?id=472045&units=metric&lang=en&appid=***";
