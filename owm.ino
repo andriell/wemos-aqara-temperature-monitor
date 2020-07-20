@@ -2,8 +2,6 @@
 // https://openweathermap.org/weather-conditions
 
 
-
-
 struct StructOwm {
   int id = 800;
   const char* main = "Clear";
