@@ -1,7 +1,7 @@
 #include "images.h"
 
-#define img_x 72
-#define img_y 9
+#define DISPLAY_IMG_X 72
+#define DISPLAY_IMG_Y 9
 
 SH1106 display(0x3C, WEMOS_D1, WEMOS_D2);
 
@@ -11,22 +11,17 @@ void displaySetup()   {
   displayLog(String("Loading..."));
 }
 
-int icon = 1;
-int spinner = 0;
+int displayIcon = 1;
+int displaySpinner = 0;
 
 void displayLoop() {
   display.clear();
 
-  // Выравниваем надпись по центру второй половины
-  // Средняя ширина одной буквы при размере шрифта 10 равна 5 px
-  // При размере шрифта 10 в строке длинной 64 px помещается 15 символов
   display.setFont(Dialog_plain_8);
-  String city = owmCity();
-  if (city.length() >= 14) {
-    display.drawString(64, 0, city);
-  } else {
-    display.drawString(64 + ((14 - city.length()) * 5) / 2, 0, city);
-  }
+  // String timeStr = String(mainMillis());
+  String timeStr = timeString();
+  display.drawString(64, 0, timeStr);
+  
 
   // Выравниваем надпись по центру второй половины
   // Средняя ширина одной буквы при размере шрифта 10 равна 5 px
@@ -39,43 +34,43 @@ void displayLoop() {
     display.drawString(64 + ((12 - desc.length()) * 5) / 2, 54, desc);
   }
 
-  icon = owmIcon();
-  switch (icon) {
+  displayIcon = owmIcon(); // Если закомментировать эту строчку, то иконки будут меняться циклично
+  switch (displayIcon) {
     case 1:
-      display.drawXbm(img_x, img_y, img_width, img_height, img01_bits);
-      icon = 2;
+      display.drawXbm(DISPLAY_IMG_X, DISPLAY_IMG_Y, IMAGES_WIDTH, IMAGES_HEIGHT, img01_bits);
+      displayIcon = 2;
       break;
     case 2:
-      display.drawXbm(img_x, img_y, img_width, img_height, img02_bits);
-      icon = 3;
+      display.drawXbm(DISPLAY_IMG_X, DISPLAY_IMG_Y, IMAGES_WIDTH, IMAGES_HEIGHT, img02_bits);
+      displayIcon = 3;
       break;
     case 3:
-      display.drawXbm(img_x, img_y, img_width, img_height, img03_bits);
-      icon = 4;
+      display.drawXbm(DISPLAY_IMG_X, DISPLAY_IMG_Y, IMAGES_WIDTH, IMAGES_HEIGHT, img03_bits);
+      displayIcon = 4;
       break;
     case 4:
-      display.drawXbm(img_x, img_y, img_width, img_height, img04_bits);
-      icon = 9;
+      display.drawXbm(DISPLAY_IMG_X, DISPLAY_IMG_Y, IMAGES_WIDTH, IMAGES_HEIGHT, img04_bits);
+      displayIcon = 9;
       break;
     case 9:
-      display.drawXbm(img_x, img_y, img_width, img_height, img09_bits);
-      icon = 10;
+      display.drawXbm(DISPLAY_IMG_X, DISPLAY_IMG_Y, IMAGES_WIDTH, IMAGES_HEIGHT, img09_bits);
+      displayIcon = 10;
       break;
     case 10:
-      display.drawXbm(img_x, img_y, img_width, img_height, img10_bits);
-      icon = 11;
+      display.drawXbm(DISPLAY_IMG_X, DISPLAY_IMG_Y, IMAGES_WIDTH, IMAGES_HEIGHT, img10_bits);
+      displayIcon = 11;
       break;
     case 11:
-      display.drawXbm(img_x, img_y, img_width, img_height, img11_bits);
-      icon = 13;
+      display.drawXbm(DISPLAY_IMG_X, DISPLAY_IMG_Y, IMAGES_WIDTH, IMAGES_HEIGHT, img11_bits);
+      displayIcon = 13;
       break;
     case 13:
-      display.drawXbm(img_x, img_y, img_width, img_height, img13_bits);
-      icon = 50;
+      display.drawXbm(DISPLAY_IMG_X, DISPLAY_IMG_Y, IMAGES_WIDTH, IMAGES_HEIGHT, img13_bits);
+      displayIcon = 50;
       break;
     case 50:
-      display.drawXbm(img_x, img_y, img_width, img_height, img50_bits);
-      icon = 1;
+      display.drawXbm(DISPLAY_IMG_X, DISPLAY_IMG_Y, IMAGES_WIDTH, IMAGES_HEIGHT, img50_bits);
+      displayIcon = 1;
       break;
   }
 
@@ -88,7 +83,7 @@ void displayLoop() {
   display.drawString(0, 43, weatherHumidity());
   display.drawString(0, 52, weatherPressure());
 
-  switch (spinner) {
+  /*switch (displaySpinner) {
     case 0:
       display.drawXbm(120, 0, 6, 6, planer_0_bits);
       break;
@@ -100,10 +95,10 @@ void displayLoop() {
       break;
     default:
       display.drawXbm(120, 0, 6, 6, planer_3_bits);
-      spinner = 0;
+      displaySpinner = 0;
       break;
   }
-  spinner++;
+  displaySpinner++;*/
 
   // Voltage
   // Две полоски в нижней части экрана.
@@ -121,10 +116,10 @@ void displayLoop() {
 void displayVoltage(long v, int y) {
   display.setPixel(51, y);
   long voltage = (v - 2500) / 10;
-  Serial.print("Display. Voltage: ");
+  /*Serial.print("Display. Voltage: ");
   Serial.print(voltage);
   Serial.print(" y: ");
-  Serial.println(y);
+  Serial.println(y);*/
   if (voltage > 0) {
     if (voltage > 50) {
       voltage = 50;

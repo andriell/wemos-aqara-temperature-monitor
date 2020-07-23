@@ -1,15 +1,16 @@
 // Open weather map
 // https://openweathermap.org/weather-conditions
 
-
 struct StructOwm {
   int id = 800;
-  const char* main = "Clear";
-  const char* description = "clear sky";
-  int icon = 1;
-  const char* city = "City";
+  String main;
+  String description;
+  int icon = 0;
+  String city;
 };
 
+#define OWM_PERIOD 307
+int owmLoopCount = OWM_PERIOD;
 
 struct StructOwm owm;
 
@@ -18,11 +19,17 @@ void owmSetup() {
 }
 
 void owmLoop() {
+  owmLoopCount++;
+  if (owmLoopCount < OWM_PERIOD) {
+    return;
+  }
+  owmLoopCount = 0;
+  
   owm.id = 0;
-  owm.main = "";
-  owm.description = "";
+  owm.main = String("");
+  owm.description = String("");
   owm.icon = 0;
-  owm.city = "";
+  owm.city = String("");
   
   if ((WiFi.status() != WL_CONNECTED)) {
     return;
@@ -60,13 +67,13 @@ void owmLoop() {
   DynamicJsonDocument doc(1024);
 
   deserializeJson(doc, responseStr);
-  JsonObject responceObj = doc.as<JsonObject>();
-  owm.id = responceObj["weather"][0]["id"];
-  owm.main = responceObj["weather"][0]["main"];
-  owm.description = responceObj["weather"][0]["description"];
-  String icon = responceObj["weather"][0]["icon"];
+  JsonObject responseObj = doc.as<JsonObject>();
+  owm.id = responseObj["weather"][0]["id"];
+  owm.main = responseObj["weather"][0]["main"].as<String>();
+  owm.description = responseObj["weather"][0]["description"].as<String>();
+  String icon = responseObj["weather"][0]["icon"];
   owm.icon = icon.substring(0, 2).toInt();
-  owm.city = responceObj["name"];
+  owm.city = responseObj["name"].as<String>();
 
   printOwm(owm);
 }
@@ -91,9 +98,9 @@ int owmIcon() {
 }
 
 String owmCity() {
-  return String(owm.city);
+  return owm.city;
 }
 
 String owmDescription() {
-  return String(owm.description);
+  return owm.description;
 }

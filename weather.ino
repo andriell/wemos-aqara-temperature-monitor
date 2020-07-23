@@ -1,7 +1,5 @@
 char incomingPacket[UDP_TX_PACKET_MAX_SIZE + 1];
 
-WiFiUDP Udp;
-
 struct StructWeather {
   String sid;
   long voltage;
@@ -10,70 +8,118 @@ struct StructWeather {
   long pressure;
 };
 
+#define WEATHER_PERIOD 1801
+int weatherLoopCount = WEATHER_PERIOD;
+
 struct StructWeather weather1;
 struct StructWeather weather2;
 
+WiFiUDP weatherUdp;
+WiFiUDP weatherUdpMulticast;
+const IPAddress weatherUdpMulticastIp(224, 0, 0, 50);
+
 void weatherSetup()
 {
-  Udp.begin(9898);
+  weatherUdp.begin(9899);
+  weatherUdpMulticast.beginMulticast(WiFi.localIP(), weatherUdpMulticastIp, 9898);
   weather1.sid = configWeatherSid1;
   weather2.sid = configWeatherSid2;
 }
 
 void weatherLoop()
 {
-  updateWeather(&weather1);
-  printWeather(&weather1);
-  updateWeather(&weather2);
-  printWeather(&weather2);
+  weatherRead(&weatherUdp);
+  weatherRead(&weatherUdpMulticast);
+
+  weatherLoopCount++;
+  if (weatherLoopCount < WEATHER_PERIOD) {
+    return;
+  }
+  weatherLoopCount = 0;
+
+  weatherRequest(&weather1);
+  weatherRequest(&weather2);
 }
 
-void updateWeather(struct StructWeather* weather) {
+void weatherRequest(struct StructWeather* weather) {
   String request = "{\"cmd\":\"read\",\"sid\":\"" + weather->sid + "\"}";
 
   Serial.print("Send ");
   Serial.println(request);
 
-  Udp.beginPacket(configWeatherHubIp, 9898);
-  Udp.write((char*) request.c_str());
-  int isEnd = Udp.endPacket();
+  weatherUdp.beginPacket(configWeatherHubIp, 9898);
+  weatherUdp.write((char*) request.c_str());
+  int isEnd = weatherUdp.endPacket();
 
   Serial.print("End packet: ");
   Serial.println(isEnd);
 
-  delay(1000);
+}
 
-  int packetSize = Udp.parsePacket();
+void weatherRead(WiFiUDP* udp) {
+  int packetSize = udp->parsePacket();
   if (!packetSize) {
+    //Serial.println("Empty");
     return;
   }
 
-  // receive incoming UDP packets
-  Serial.printf("Received %d bytes from %s, port %d\n", packetSize, Udp.remoteIP().toString().c_str(), Udp.remotePort());
-  int len = Udp.read(incomingPacket, UDP_TX_PACKET_MAX_SIZE);
-  if (len > 0)
-  {
+  Serial.print("Packet. Size: ");
+  Serial.print(packetSize);
+  Serial.print("; Remote IP: ");
+  Serial.print(udp->remoteIP().toString().c_str());
+  Serial.print("; Remote Port: ");
+  Serial.print(udp->remotePort());
+  Serial.print("; Destination IP: ");
+  Serial.print(udp->destinationIP());
+  Serial.print("; Data: ");
+
+  int len = udp->read(incomingPacket, UDP_TX_PACKET_MAX_SIZE);
+  if (len > 0) {
     incomingPacket[len] = 0;
   }
-  Serial.printf("UDP packet contents: %s\n", incomingPacket);
+  Serial.println(incomingPacket);
+
+  // {"cmd":"read_ack","model":"weather.v1","sid":"***","short_id":1560,"data":"{\"voltage\":3005,\"temperature\":\"2571\",\"humidity\":\"3104\",\"pressure\":\"98738\"}"}
+  // {"cmd":"report","model":"weather.v1","sid":"158d0003f1187f","short_id":7153,"data":"{\"temperature\":\"2497\"}"}
+  // {"cmd":"report","model":"weather.v1","sid":"158d0003f1187f","short_id":7153,"data":"{\"humidity\":\"3349\"}"}
+  // {"cmd":"report","model":"weather.v1","sid":"158d0003f1187f","short_id":7153,"data":"{\"pressure\":\"98780\"}"}
 
   DynamicJsonDocument doc(1024);
 
   deserializeJson(doc, incomingPacket);
-  JsonObject responce = doc.as<JsonObject>();
-  String responceSid = responce["sid"];
-  String responceData = responce["data"];
-  if (!weather->sid.equals(responceSid)) {
+  JsonObject response = doc.as<JsonObject>();
+  String responseCmd = response["cmd"].as<String>();
+  String responseSid = response["sid"].as<String>();
+  String responseData = response["data"].as<String>();
+
+  if (!(String("report").equals(responseCmd) || String("read_ack").equals(responseCmd))) {
     return;
   }
-  deserializeJson(doc, responceData);
-  responce = doc.as<JsonObject>();
-  weather->voltage = responce["voltage"];
-  weather->temperature = responce["temperature"];
-  weather->humidity = responce["humidity"];
-  weather->pressure = responce["pressure"];
 
-  return;
+  StructWeather* weather;
+  if (weather1.sid.equals(responseSid)) {
+    weather = &weather1;
+  } else if (weather2.sid.equals(responseSid)) {
+    weather = &weather2;
+  } else {
+    return;
+  }
+
+  deserializeJson(doc, responseData);
+  response = doc.as<JsonObject>();
+  if (response.containsKey("voltage")) {
+    weather->voltage = response["voltage"];
+  }
+  if (response.containsKey("temperature")) {
+    weather->temperature = response["temperature"];
+  }
+  if (response.containsKey("humidity")) {
+    weather->humidity = response["humidity"];
+  }
+  if (response.containsKey("pressure")) {
+    weather->pressure = response["pressure"];
+  }
+  printWeather(weather);
 }
 
 void printWeather(struct StructWeather* weather) {
