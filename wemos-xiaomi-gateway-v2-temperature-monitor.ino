@@ -57,10 +57,10 @@ void loop()
   displayLoop();
 
   unsigned long endMillis = mainMillis();
-  unsigned long executionTime = 1000UL;
+  unsigned long executionTime;
   if (endMillis < startMillis) {
     executionTime = MAX_UL - startMillis;
-    executionTime += endMillis;
+    executionTime += endMillis + 1;
   } else {
     executionTime = endMillis - startMillis;
   }
